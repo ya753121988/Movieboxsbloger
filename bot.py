@@ -22,7 +22,7 @@ AD_LINKS = [
     "https://crowdsynonym.com/m4m7xwhc?key=1816df9cf8df7b5f978a107568ecce38",
     "https://www.effectivecpmnetwork.com/tpxm5krbv?key=a9a3e08835e93a54ffdaad1597bfe6cb",
     "https://crowdsynonym.com/q8cbm9v32?key=e2aa4fe6d8d57da399eea4c4867ed624",
-    "https://www.effectivecpmnetwork.com/iqs1w6v06c?key=19b65cbb2964d6f0a3c934b5ee855f18"
+    "https://crowdsynonym.com/wqt9j69uq?key=3b3282ffc9bcdc5ccc40f3cd466c6bbd"
 ]
 
 UI_HTML = """
