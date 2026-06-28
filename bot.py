@@ -11,11 +11,11 @@ app = Flask(__name__)
 TMDB_API_KEY = "7dc544d9253bccc3cfecc1c677f69819"
 
 AD_LINKS = [
-    "https://www.effectivecpmnetwork.com/xqmb731x1?key=0267816362fc4320de630e064b317db1",
-    "https://www.effectivecpmnetwork.com/qw8kn1x7h?key=5fdb7c5ecd8aff08f9ffb43334a9d3e6",
-    "https://www.effectivecpmnetwork.com/vrstnq7p2s?key=257dbfc9920ae1f06a0a7b33cbeb410d",
+    "https://crowdsynonym.com/dgrpzgfys?key=fc400bf9c6e966532f791aa601696ab7",
+    "https://crowdsynonym.com/idzkh6x2mq?key=35ff6fbb30a08e12dd0bf627a2918d46",
+    "https://crowdsynonym.com/m4m7xwhc?key=1816df9cf8df7b5f978a107568ecce38",
     "https://www.effectivecpmnetwork.com/tpxm5krbv?key=a9a3e08835e93a54ffdaad1597bfe6cb",
-    "https://www.effectivecpmnetwork.com/wsck7gj1?key=2f49c16a80560c9b810503b65da32363",
+    "https://crowdsynonym.com/q8cbm9v32?key=e2aa4fe6d8d57da399eea4c4867ed624",
     "https://www.effectivecpmnetwork.com/iqs1w6v06c?key=19b65cbb2964d6f0a3c934b5ee855f18"
 ]
 
