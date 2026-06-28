@@ -420,6 +420,44 @@ window.onload = function() { toggleMode('movie'); };
 @app.route('/')
 def index(): return render_template_string(UI_HTML)
 
+# --- নতুন যোগ করা বোট স্টার্ট ফাংশন ---
+@app.route('/telegram_webhook', methods=['POST'])
+def telegram_webhook():
+    update = request.json
+    if "message" in update and "text" in update["message"]:
+        msg = update["message"]
+        chat_id = msg["chat"]["id"]
+        text = msg["text"]
+        
+        if text.startswith("/start"):
+            user_full_name = f"{msg['from'].get('first_name', '')} {msg['from'].get('last_name', '')}".strip()
+            user_name = f"@{msg['from'].get('username', 'N/A')}"
+            user_id = msg['from'].get('id', 'N/A')
+            
+            keyboard = {
+                "inline_keyboard": [
+                    [{"text": f"👤 Name: {user_full_name}", "callback_data": "none"}],
+                    [{"text": f"🆔 Username: {user_name}", "callback_data": "none"}],
+                    [{"text": f"🔢 ID: {user_id}", "callback_data": "none"}],
+                    [
+                        {"text": "🎬 Premium Channel", "url": "https://t.me/FlixBoxs"},
+                        {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixbox"}
+                    ],
+                    [
+                        {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixboxsvide"},
+                        {"text": "💬 Chat Group", "url": "https://t.me/MovieFlixboxChat"}
+                    ],
+                    [{"text": "❓ About Us", "url": f"{SITE_URL}/p/about.html"}]
+                ]
+            }
+            
+            requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
+                "chat_id": chat_id,
+                "text": "👋 Welcome to our Bot! Here is your info:",
+                "reply_markup": keyboard
+            })
+    return jsonify({"status": "ok"})
+
 @app.route('/api/upload', methods=['POST'])
 def upload_api():
     try:
@@ -457,8 +495,39 @@ def notify_api():
     try:
         data = request.json
         title = data.get('title', 'Unknown')
-        story = data.get('story', '')[:200] + "..."
+        story = data.get('story', '')
         img = data.get('backdrop', '')
+        year = data.get('date', 'N/A')[:4]
+        lang = data.get('lang', 'N/A')
+        post_type = data.get('type', 'movie')
+        
+        # ডিটেইলস ক্যাপশন তৈরি
+        if post_type == 'movie':
+            qualities = ", ".join([l['q'] for l in data.get('movieLinks', [])])
+            caption = (f"🎬 *{title}*\n\n"
+                       f"📅 *Year:* {year}\n"
+                       f"🌐 *Language:* {lang}\n"
+                       f"💎 *Quality:* {qualities}\n\n"
+                       f"📝 *Story:* {story[:200]}...\n\n"
+                       f"📥 *Download Now from our Site!*")
+        else:
+            seasons = data.get('seasons', [])
+            total_seasons = len(seasons)
+            season_info = ""
+            total_eps = 0
+            for i, s in enumerate(seasons):
+                ep_count = len(s.get('episodes', []))
+                total_eps += ep_count
+                season_info += f"🔹 Season {i+1}: {ep_count} Episodes\n"
+            
+            caption = (f"🎬 *{title}* (Web Series)\n\n"
+                       f"📅 *Year:* {year}\n"
+                       f"🌐 *Language:* {lang}\n"
+                       f"📂 *Total Seasons:* {total_seasons}\n"
+                       f"🎞 *Total Episodes:* {total_eps}\n"
+                       f"{season_info}\n"
+                       f"📝 *Story:* {story[:150]}...\n\n"
+                       f"📥 *Download Now from our Site!*")
         
         keyboard = {
             "inline_keyboard": [
@@ -474,8 +543,6 @@ def notify_api():
                 ]
             ]
         }
-        
-        caption = f"🎬 *{title}*\n\n📝 *Story:* {story}\n\n📥 *Download Now from our Site!*"
         
         tg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
         payload = {
