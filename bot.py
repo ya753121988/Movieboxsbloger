@@ -445,7 +445,7 @@ def telegram_webhook():
                     ],
                     [
                         {"text": "💬 Chat Group", "url": "https://t.me/movieflixboxchat"},
-                        {"text": "🖥️ Dev Channel", "url": "https://t.me/Flixboxs"}
+                        {"text": "🖥️ Dev Channel", "url": "https://t.me/FlixBoxsAdminBot"}
                     ],
                     [{"text": "❓ About Us", "url": f"{SITE_URL}/p/about.html"}]
                 ]
