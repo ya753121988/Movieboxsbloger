@@ -532,7 +532,7 @@ def notify_api():
         keyboard = {
             "inline_keyboard": [
                 [{"text": "🌐 Visit Website", "url": SITE_URL}],
-                [{"text": "❓ How to Download", "url": f"{SITE_URL}/p/how-to-download.html"}],
+                [{"text": "❓ How to Download", "url": "https://t.me/moviedownlodflix"}],
                 [
                     {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixboxsvide"},
                         {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
