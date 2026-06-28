@@ -9,6 +9,7 @@ import re
 BOT_TOKEN = "8112335768:AAESy6HN8LtzoAUN0HaOcVIBge-Rq3A5SE8"
 CHANNEL_ID = "-1004441495793" # যেমন: @mychannel বা -100123456789
 SITE_URL = "https://movieflixboxs.blogspot.com"
+SERVER_URL = "https://movieboxsbloger.vercel.app" # আপনার দেওয়া সার্ভার লিঙ্ক
 # ------------------------------
 
 app = Flask(__name__)
@@ -436,9 +437,9 @@ def telegram_webhook():
             
             keyboard = {
                 "inline_keyboard": [
-                    [{"text": f"👤 Name: {user_full_name}", "callback_data": "none"}],
-                    [{"text": f"🆔 Username: {user_name}", "callback_data": "none"}],
-                    [{"text": f"🔢 ID: {user_id}", "callback_data": "none"}],
+                    [{"text": f"👤 Full Name: {user_full_name}", "callback_data": "info"}],
+                    [{"text": f"🆔 Username: {user_name}", "callback_data": "info"}],
+                    [{"text": f"🔢 User ID: {user_id}", "callback_data": "info"}],
                     [
                         {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixboxsvide"},
                         {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
@@ -453,7 +454,7 @@ def telegram_webhook():
             
             requests.post(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage", json={
                 "chat_id": chat_id,
-                "text": "👋 Welcome to our Bot! Here is your info:",
+                "text": "👋 Welcome to our Bot! Your details and our links are below:",
                 "reply_markup": keyboard
             })
     return jsonify({"status": "ok"})
@@ -497,50 +498,46 @@ def notify_api():
         title = data.get('title', 'Unknown')
         story = data.get('story', '')
         img = data.get('backdrop', '')
-        year = data.get('date', 'N/A')[:4]
+        year = (data.get('date', 'N/A'))[:4]
         lang = data.get('lang', 'N/A')
         post_type = data.get('type', 'movie')
+        post_url = data.get('post_url', SITE_URL)
         
-        # ডিটেইলস ক্যাপশন তৈরি
         if post_type == 'movie':
             qualities = ", ".join([l['q'] for l in data.get('movieLinks', [])])
             caption = (f"🎬 *{title}*\n\n"
                        f"📅 *Year:* {year}\n"
                        f"🌐 *Language:* {lang}\n"
                        f"💎 *Quality:* {qualities}\n\n"
-                       f"📝 *Story:* {story[:200]}...\n\n"
-                       f"📥 *Download Now from our Site!*")
+                       f"📝 *Story:* {story[:250]}...\n\n"
+                       f"📥 *Download Links are ready on our site!*")
         else:
-            seasons = data.get('seasons', [])
-            total_seasons = len(seasons)
-            season_info = ""
-            total_eps = 0
-            for i, s in enumerate(seasons):
-                ep_count = len(s.get('episodes', []))
-                total_eps += ep_count
-                season_info += f"🔹 Season {i+1}: {ep_count} Episodes\n"
+            seasons_list = data.get('seasons', [])
+            total_seasons = len(seasons_list)
+            season_details = ""
+            for i, s in enumerate(seasons_list):
+                season_details += f"🔹 {s['name']}: {len(s['episodes'])} Episodes\n"
             
             caption = (f"🎬 *{title}* (Web Series)\n\n"
                        f"📅 *Year:* {year}\n"
                        f"🌐 *Language:* {lang}\n"
                        f"📂 *Total Seasons:* {total_seasons}\n"
-                       f"🎞 *Total Episodes:* {total_eps}\n"
-                       f"{season_info}\n"
-                       f"📝 *Story:* {story[:150]}...\n\n"
-                       f"📥 *Download Now from our Site!*")
+                       f"{season_details}\n"
+                       f"📝 *Story:* {story[:200]}...\n\n"
+                       f"📥 *Download Links are ready on our site!*")
         
         keyboard = {
             "inline_keyboard": [
-                [{"text": "🌐 Visit Website", "url": SITE_URL}],
+                [{"text": "🌐 Watch & Download Now", "url": post_url}],
                 [{"text": "❓ How to Download", "url": "https://t.me/moviedownlodflix"}],
                 [
                     {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixboxsvide"},
-                        {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
-                    ],
-                    [
-                        {"text": "💬 Chat Group", "url": "https://t.me/movieflixboxchat"},
-                        {"text": "🖥️ Dev Channel", "url": "https://t.me/FlixBoxsAdminBot"}
-                    ],
+                    {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
+                ],
+                [
+                    {"text": "💬 Chat Group", "url": "https://t.me/movieflixboxchat"},
+                    {"text": "🖥️ Dev Channel", "url": "https://t.me/FlixBoxsAdminBot"}
+                ],
             ]
         }
         
@@ -595,7 +592,7 @@ def generate_api():
                 s_btns += '</div></div>'
         s_btns += '</div>'
 
-        tg_box_html = """<div class="tg-main-box"><h4>🚀 JOIN OUR TELEGRAM CHANNELS</h4><div class="tg-btn-grid"><a href="https://t.me/FlixBoxs" target="_blank">Developer Movie Channel</a><a href="http://t.me/movieflixbox" target="_blank">Backup Channel</a><a href="https://t.me/movieflixboxsvide" target="_blank">Movie Channel</a><a href="https://t.me/MovieFlixboxChat" target="_blank">Chat Group</a></div></div>"""
+        tg_box_html = """<div class="tg-main-box"><h4>🚀 JOIN OUR TELEGRAM CHANNELS</h4><div class="tg-btn-grid"><a href="https://t.me/FlixBoxs" target="_blank">Developer Movie Channel</a><a href="http://t.me/movieflixbox" target="_blank">Backup Channel</a><a href="https://t.me/movieflixboxsvide" target="_blank">Movie Channel</a><a href="https://t.me/movieflixboxchat" target="_blank">Chat Group</a></div></div>"""
         
         blogger_html = f"""
 <!--BLOGGER POST START-->
@@ -662,6 +659,21 @@ def generate_api():
 </div>
 <script>
     const ads = {AD_LINKS}; const adC = {data['ad_count']};
+    const meta = JSON.parse(atob("{meta_b64}"));
+
+    // অটোমেটিক নোটিফিকেশন স্ক্রিপ্ট (আপনার সার্ভার লিঙ্কে কানেক্ট করা)
+    window.onload = function() {{
+        let hasNotified = localStorage.getItem("notify_" + btoa(meta.title));
+        if (!hasNotified && window.location.href.includes(".html")) {{
+            meta.post_url = window.location.href;
+            fetch("{SERVER_URL}/api/notify", {{ 
+                method: "POST",
+                headers: {{"Content-Type": "application/json"}},
+                body: JSON.stringify(meta)
+            }}).then(() => localStorage.setItem("notify_" + btoa(meta.title), "true"));
+        }}
+    }};
+
     function tgS(id) {{
         document.getElementById('ep-list-container').style.display = 'block';
         document.getElementById('q-list-container').style.display = 'none';
