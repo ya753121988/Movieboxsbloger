@@ -440,12 +440,12 @@ def telegram_webhook():
                     [{"text": f"🆔 Username: {user_name}", "callback_data": "none"}],
                     [{"text": f"🔢 ID: {user_id}", "callback_data": "none"}],
                     [
-                        {"text": "🎬 Premium Channel", "url": "https://t.me/FlixBoxs"},
-                        {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixbox"}
+                        {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixboxsvide"},
+                        {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
                     ],
                     [
-                        {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixboxsvide"},
-                        {"text": "💬 Chat Group", "url": "https://t.me/MovieFlixboxChat"}
+                        {"text": "💬 Chat Group", "url": "https://t.me/movieflixboxchat"},
+                        {"text": "🖥️ Dev Channel", "url": "https://t.me/Flixboxs"}
                     ],
                     [{"text": "❓ About Us", "url": f"{SITE_URL}/p/about.html"}]
                 ]
@@ -534,13 +534,13 @@ def notify_api():
                 [{"text": "🌐 Visit Website", "url": SITE_URL}],
                 [{"text": "❓ How to Download", "url": f"{SITE_URL}/p/how-to-download.html"}],
                 [
-                    {"text": "🎬 Premium Channel", "url": "https://t.me/FlixBoxs"},
-                    {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixbox"}
-                ],
-                [
-                    {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixboxsvide"},
-                    {"text": "💬 Chat Group", "url": "https://t.me/MovieFlixboxChat"}
-                ]
+                    {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixboxsvide"},
+                        {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixbox"}
+                    ],
+                    [
+                        {"text": "💬 Chat Group", "url": "https://t.me/movieflixboxchat"},
+                        {"text": "🖥️ Dev Channel", "url": "https://t.me/Flixboxs"}
+                    ],
             ]
         }
         
