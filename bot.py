@@ -5,6 +5,12 @@ from flask import Flask, render_template_string, request, jsonify
 import requests
 import re
 
+# --- টেলিগ্রাম এবং সাইট ভেরিএবল ---
+BOT_TOKEN = "8112335768:AAESy6HN8LtzoAUN0HaOcVIBge-Rq3A5SE8"
+CHANNEL_ID = "-1004441495793" # যেমন: @mychannel বা -100123456789
+SITE_URL = "https://movieflixboxs.blogspot.com"
+# ------------------------------
+
 app = Flask(__name__)
 
 # configuration
@@ -164,6 +170,7 @@ UI_HTML = """
                 <div class="d-flex gap-3 mb-3">
                     <button class="btn btn-success flex-grow-1 fw-bold py-3" onclick="copyHTML()">COPY HTML CODE</button>
                     <button class="btn btn-warning flex-grow-1 fw-bold py-3" onclick="previewToggle()">PREVIEW POST</button>
+                    <button class="btn btn-info flex-grow-1 fw-bold py-3" onclick="sendToTelegram()">📢 NOTIFICATION</button>
                 </div>
                 <div id="preview_area" class="preview-box"></div>
                 <div id="html_box" class="code-box"></div>
@@ -175,6 +182,7 @@ UI_HTML = """
 <script>
 let sCount = 0;
 let fIdx = 0;
+let lastGeneratedData = null;
 
 function triggerUp(id) { document.getElementById(id).click(); }
 
@@ -346,8 +354,17 @@ async function generateFinalHTML() {
         movieLinks: Array.from(document.querySelectorAll('.mq')).filter(i=>i.value).map(i=>({q:i.dataset.q, url:i.value})),
         seasons: Array.from(document.querySelectorAll('.season-item')).map(s=>({ name: s.querySelector('.st').value, episodes: Array.from(s.querySelectorAll('.episode-item')).map(e=>({ name: e.querySelector('.et').value, links: Array.from(e.querySelectorAll('.eq')).filter(i=>i.value).map(i=>({q:i.dataset.q, url:i.value})) })) }))
     };
+    lastGeneratedData = data;
     const res = await fetch('/api/generate', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) });
     const resJ = await res.json(); document.getElementById('html_box').innerText = resJ.html; document.getElementById('preview_area').innerHTML = resJ.html; document.getElementById('final_section').style.display='block';
+}
+
+async function sendToTelegram() {
+    if(!lastGeneratedData) return alert("Generate code first!");
+    const res = await fetch('/api/notify', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(lastGeneratedData) });
+    const resJ = await res.json();
+    if(resJ.status === 'success') alert("Telegram Notification Sent!");
+    else alert("Telegram Error: " + resJ.error);
 }
 
 function importCode() {
@@ -434,6 +451,45 @@ def details_api():
 def person_api():
     id = request.args.get('id')
     return jsonify(requests.get(f"https://api.themoviedb.org/3/person/{id}?api_key={TMDB_API_KEY}&append_to_response=combined_credits").json())
+
+@app.route('/api/notify', methods=['POST'])
+def notify_api():
+    try:
+        data = request.json
+        title = data.get('title', 'Unknown')
+        story = data.get('story', '')[:200] + "..."
+        img = data.get('backdrop', '')
+        
+        keyboard = {
+            "inline_keyboard": [
+                [{"text": "🌐 Visit Website", "url": SITE_URL}],
+                [{"text": "❓ How to Download", "url": f"{SITE_URL}/p/how-to-download.html"}],
+                [
+                    {"text": "🎬 Premium Channel", "url": "https://t.me/FlixBoxs"},
+                    {"text": "🍿 Movie Channel", "url": "https://t.me/movieflixbox"}
+                ],
+                [
+                    {"text": "🌊 Backup Channel", "url": "https://t.me/movieflixboxsvide"},
+                    {"text": "💬 Chat Group", "url": "https://t.me/MovieFlixboxChat"}
+                ]
+            ]
+        }
+        
+        caption = f"🎬 *{title}*\n\n📝 *Story:* {story}\n\n📥 *Download Now from our Site!*"
+        
+        tg_url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendPhoto"
+        payload = {
+            "chat_id": CHANNEL_ID,
+            "photo": img,
+            "caption": caption,
+            "parse_mode": "Markdown",
+            "reply_markup": json.dumps(keyboard)
+        }
+        
+        res = requests.post(tg_url, data=payload)
+        return jsonify({"status": "success", "response": res.json()})
+    except Exception as e:
+        return jsonify({"status": "error", "error": str(e)}), 500
 
 @app.route('/api/generate', methods=['POST'])
 def generate_api():
