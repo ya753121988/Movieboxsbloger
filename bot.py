@@ -8,7 +8,7 @@ import re
 # --- টেলিগ্রাম এবং সাইট ভেরিএবল ---
 BOT_TOKEN = "8112335768:AAESy6HN8LtzoAUN0HaOcVIBge-Rq3A5SE8"
 CHANNEL_ID = "-1004441495793" # যেমন: @mychannel বা -100123456789
-SITE_URL = "https://movieflixboxs.blogspot.com"
+SITE_URL = "moveflixboxs.blogspot.com"
 # ------------------------------
 
 app = Flask(__name__)
